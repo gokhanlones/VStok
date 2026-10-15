@@ -43,6 +43,9 @@
     .urun-miktar { font-size: 14px; font-weight: 700; color: #3D9BE9; white-space: nowrap; }
     .urun-alt { margin-top: 4px; font-size: 12px; font-weight: 300; color: #4A6780; }
     .skt-chip { display: inline-block; margin-top: 8px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+    .miktar-gecmis { margin-top: 10px; padding-top: 10px; border-top: 1px solid #F0F4F8; display: flex; flex-direction: column; gap: 4px; }
+    .urun-miktar-log { display: flex; justify-content: space-between; font-size: 12px; font-weight: 300; color: #4A6780; }
+    .urun-miktar-log span:first-child { font-weight: 700; color: #0A1520; }
     .skt-ok   { background: #E8F8F0; color: #27AE60; }
     .skt-uyar { background: #FEF3E2; color: #F39C12; }
     .skt-krit { background: #FDEDEC; color: #E74C3C; }
@@ -87,6 +90,12 @@
     .sil-butonlar { display: flex; gap: 12px; justify-content: flex-end; }
     .btn-vazgec { padding: 10px 20px; border: none; background: none; color: #4A6780; font-family: 'Barlow', system-ui, sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; }
     .btn-sil-onayla { padding: 10px 24px; border: none; background: #E74C3C; color: #fff; font-family: 'Barlow', system-ui, sans-serif; font-size: 14px; font-weight: 700; border-radius: 8px; cursor: pointer; }
+    .miktar-guncelle-row { display: flex; align-items: center; justify-content: center; gap: 12px; }
+    .miktar-btn { width: 44px; height: 44px; border-radius: 50%; border: none; background: #0A1520; color: #fff; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .miktar-guncelle-input { width: 100px; text-align: center; padding: 10px; border: 1.5px solid #D0DCE8; border-radius: 8px; font-family: 'Barlow', system-ui, sans-serif; font-size: 18px; font-weight: 700; color: #0A1520; outline: none; }
+    .miktar-guncelle-input:focus { border-color: #3D9BE9; }
+    .btn-miktar-kaydet { width: 100%; padding: 12px; background: #3D9BE9; color: #fff; font-family: 'Barlow', system-ui, sans-serif; font-size: 14px; font-weight: 700; border: none; border-radius: 8px; cursor: pointer; }
+    .sil-ayrac { border: none; border-top: 1px solid #F0F4F8; margin: 4px 0; }
   </style>
 </head>
 <body>
@@ -157,11 +166,21 @@
     <button class="btn-kaydet" id="btn-kaydet">Kaydet</button>
   </div>
 
-  <!-- Sil modalı -->
+  <!-- Uzun basma modalı -->
   <div class="sil-overlay" id="sil-overlay">
     <div class="sil-kart">
-      <div class="sil-baslik">Ürünü Sil</div>
-      <div class="sil-metin" id="sil-metin">Bu ürünü silmek istediğine emin misin?</div>
+      <div class="sil-baslik" id="sil-urun-ad"></div>
+
+      <!-- Miktar güncelleme -->
+      <div class="miktar-guncelle-row">
+        <button class="miktar-btn" id="btn-miktar-azalt">−</button>
+        <input class="miktar-guncelle-input" id="miktar-guncelle-val" type="number" min="0" step="any">
+        <button class="miktar-btn" id="btn-miktar-artir">+</button>
+      </div>
+      <button class="btn-miktar-kaydet" id="btn-miktar-kaydet">Miktarı Güncelle</button>
+
+      <div class="sil-ayrac"></div>
+
       <div class="sil-butonlar">
         <button class="btn-vazgec" id="btn-vazgec">Vazgeç</button>
         <button class="btn-sil-onayla" id="btn-sil-onayla">Sil</button>
@@ -172,7 +191,7 @@
   <script type="module">
     import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { urunEkle, urunleriGetir, urunGuncelle, urunSil } from './db.js';
+    import { urunEkle, urunleriGetir, urunGuncelle, urunSil, miktarEkle, miktarlariGetir } from './db.js';
 
     initializeApp({
       apiKey: "AIzaSyDhf0oH-g4c-gPRNGAnuET6kT8T3eeYFKg",
@@ -211,6 +230,11 @@
     }
 
     // ── Liste ──────────────────────────────────────────────────────
+    function tarihFormat(ts) {
+      const d = new Date(ts);
+      return d.toLocaleDateString('tr-TR') + ' ' + d.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+    }
+
     async function listeGuncelle() {
       const liste   = document.getElementById('urun-liste');
       const urunler = await urunleriGetir(alanId);
@@ -220,17 +244,31 @@
         return;
       }
 
-      liste.innerHTML = urunler.map(u => `
-        <div class="urun-kart" data-id="${u.id}">
-          <div class="urun-icerik">
-            <div class="urun-kart-ust">
-              <div class="urun-ad">${u.ad}</div>
-              <div class="urun-miktar">${u.miktar} ${u.birim}</div>
+      const kartlar = await Promise.all(urunler.map(async u => {
+        const gecmis = await miktarlariGetir(u.id);
+        const gecmisSatirlar = gecmis.length
+          ? `<div class="miktar-gecmis">${gecmis.map(m =>
+              `<div class="urun-miktar-log">
+                <span>${m.miktar} ${u.birim}</span>
+                <span>${tarihFormat(m.tarih)}</span>
+              </div>`).join('')}
+            </div>`
+          : '';
+        return `
+          <div class="urun-kart" data-id="${u.id}">
+            <div class="urun-icerik">
+              <div class="urun-kart-ust">
+                <div class="urun-ad">${u.ad}</div>
+                <div class="urun-miktar">${u.miktar} ${u.birim}</div>
+              </div>
+              <div class="urun-alt">${[u.marka,u.model,u.tip,u.seri_no,u.renk].filter(Boolean).join(' · ')}</div>
+              ${sktChip(u.skt)}
+              ${gecmisSatirlar}
             </div>
-            <div class="urun-alt">${[u.marka,u.model,u.tip,u.seri_no,u.renk].filter(Boolean).join(' · ')}</div>
-            ${sktChip(u.skt)}
-          </div>
-        </div>`).join('');
+          </div>`;
+      }));
+
+      liste.innerHTML = kartlar.join('');
 
       // Tap → düzenle, Long press → sil
       liste.querySelectorAll('.urun-kart').forEach(kart => {
@@ -312,26 +350,60 @@
         renk:    document.getElementById('f-renk').value
       };
 
-      if (editId) { await urunGuncelle(editId, veri); }
-      else        { await urunEkle(alanId, veri); }
+      if (editId) {
+        await urunGuncelle(editId, veri);
+        await miktarEkle(editId, veri.miktar);
+      } else {
+        const yeniId = await urunEkle(alanId, veri);
+        await miktarEkle(yeniId, veri.miktar);
+      }
 
       closeSheet();
       await listeGuncelle();
     });
 
-    // ── Sil ───────────────────────────────────────────────────────
+    // ── Uzun basma modalı ─────────────────────────────────────────
     const silOverlay = document.getElementById('sil-overlay');
     let silId = null;
 
-    function silModuAc(id) {
+    async function silModuAc(id) {
       silId = id;
+      const urunler = await urunleriGetir(alanId);
+      const u = urunler.find(x => x.id === id);
+      if (!u) return;
+      document.getElementById('sil-urun-ad').textContent = u.ad;
+      document.getElementById('miktar-guncelle-val').value = u.miktar;
       silOverlay.classList.add('open');
     }
 
-    document.getElementById('btn-vazgec').addEventListener('click', () => { silOverlay.classList.remove('open'); silId = null; });
+    function silKapat() { silOverlay.classList.remove('open'); silId = null; }
+
+    document.getElementById('btn-vazgec').addEventListener('click', silKapat);
+
+    document.getElementById('btn-miktar-azalt').addEventListener('click', () => {
+      const inp = document.getElementById('miktar-guncelle-val');
+      const yeni = Math.max(0, parseFloat(inp.value || 0) - 1);
+      inp.value = yeni;
+    });
+
+    document.getElementById('btn-miktar-artir').addEventListener('click', () => {
+      const inp = document.getElementById('miktar-guncelle-val');
+      inp.value = parseFloat(inp.value || 0) + 1;
+    });
+
+    document.getElementById('btn-miktar-kaydet').addEventListener('click', async () => {
+      if (!silId) return;
+      const yeniMiktar = parseFloat(document.getElementById('miktar-guncelle-val').value);
+      if (isNaN(yeniMiktar)) return;
+      await urunGuncelle(silId, { miktar: yeniMiktar });
+      await miktarEkle(silId, yeniMiktar);
+      silKapat();
+      await listeGuncelle();
+    });
+
     document.getElementById('btn-sil-onayla').addEventListener('click', async () => {
       if (silId) await urunSil(silId);
-      silOverlay.classList.remove('open'); silId = null;
+      silKapat();
       await listeGuncelle();
     });
 
