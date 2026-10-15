@@ -409,7 +409,6 @@
       if (!silId) return;
       const yeniMiktar = parseFloat(document.getElementById('miktar-guncelle-val').value);
       if (isNaN(yeniMiktar)) return;
-      await urunGuncelle(silId, { miktar: yeniMiktar });
       await miktarEkle(silId, yeniMiktar);
       silKapat();
       await listeGuncelle();
