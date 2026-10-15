@@ -228,6 +228,7 @@
 
   <script type="module">
     import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { depoEkle } from './db.js';
     import { getAuth, onAuthStateChanged }
       from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
@@ -266,10 +267,10 @@
     document.getElementById('btn-cancel').addEventListener('click', closeModal);
     modalOverlay.addEventListener('click', e => { if (e.target === modalOverlay) closeModal(); });
 
-    document.getElementById('btn-save').addEventListener('click', () => {
+    document.getElementById('btn-save').addEventListener('click', async () => {
       const ad = depoAdi.value.trim();
       if (!ad) return;
-      // Kayıt işlemi sonra eklenecek
+      await depoEkle(auth.currentUser.uid, ad);
       closeModal();
     });
   </script>
