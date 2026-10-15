@@ -93,7 +93,7 @@ export async function alanSil(id) {
 export async function urunEkle(alan_id, {
   ad, miktar, birim,
   marka = '', model = '', tip = '', seri_no = '',
-  skt = null, notlar = ''
+  skt = null, notlar = '', renk = '#ffffff'
 }) {
   const db = await openDB();
   const tx = db.transaction('urunler', 'readwrite');
@@ -101,7 +101,7 @@ export async function urunEkle(alan_id, {
     const req = tx.objectStore('urunler').add({
       alan_id, ad, miktar, birim,
       marka, model, tip, seri_no,
-      skt, notlar,
+      skt, notlar, renk,
       olusturma_tarihi: Date.now()
     });
     req.onsuccess = e => res(e.target.result);
