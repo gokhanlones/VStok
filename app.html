@@ -235,7 +235,7 @@
       }
 
       liste.innerHTML = depolar.map(d => `
-        <div class="depo-kart" onclick="location.href='depo.html?id=${d.id}&ad='+encodeURIComponent(d.ad)">
+        <div class="depo-kart" onclick="location.href='depo.html?id=${d.id}&ad=${encodeURIComponent(d.ad)}'">
           <div class="depo-kart-ad">${d.ad}</div>
           <div class="depo-kart-ok">›</div>
         </div>`).join('');
