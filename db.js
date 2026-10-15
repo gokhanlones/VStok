@@ -165,6 +165,20 @@ export async function miktarEkle(urun_id, miktar) {
   });
 }
 
+export async function miktarlariGetir(urun_id) {
+  const db = await openDB();
+  const tx = db.transaction('miktarlar', 'readonly');
+  return new Promise((res, rej) => {
+    const req = tx.objectStore('miktarlar').index('urun_id').getAll(urun_id);
+    req.onsuccess = e => {
+      const kayitlar = e.target.result;
+      kayitlar.sort((a, b) => a.tarih - b.tarih);
+      res(kayitlar);
+    };
+    req.onerror = e => rej(e.target.error);
+  });
+}
+
 export async function sonMiktariGetir(urun_id) {
   const db = await openDB();
   const tx = db.transaction('miktarlar', 'readonly');
