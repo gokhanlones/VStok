@@ -352,7 +352,6 @@
 
       if (editId) {
         await urunGuncelle(editId, veri);
-        await miktarEkle(editId, veri.miktar);
       } else {
         const yeniId = await urunEkle(alanId, veri);
         await miktarEkle(yeniId, veri.miktar);
