@@ -41,7 +41,11 @@
     .urun-kart-ust { display: flex; justify-content: space-between; align-items: flex-start; }
     .urun-ad { font-size: 16px; font-weight: 700; color: #0A1520; }
     .urun-miktar { font-size: 14px; font-weight: 700; color: #3D9BE9; white-space: nowrap; }
-    .urun-alt { margin-top: 4px; font-size: 12px; font-weight: 300; color: #4A6780; }
+    .urun-alt { margin-top: 6px; }
+    .urun-alt table { border-collapse: collapse; width: 100%; }
+    .urun-alt td { font-size: 12px; font-weight: 300; color: #4A6780; padding: 1px 6px 1px 0; vertical-align: top; }
+    .urun-alt td:first-child { font-weight: 700; color: #0A1520; white-space: nowrap; width: 1%; }
+    .urun-ilk-tarih { font-size: 12px; font-weight: 300; color: #4A6780; margin-top: 2px; }
     .skt-chip { display: inline-block; margin-top: 8px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
     .miktar-gecmis { margin-top: 10px; padding-top: 10px; border-top: 1px solid #F0F4F8; display: flex; flex-direction: column; gap: 4px; }
     .urun-miktar-log { display: flex; justify-content: space-between; font-size: 12px; font-weight: 300; color: #4A6780; }
@@ -274,7 +278,12 @@
                   ${ilkTarih}
                 </div>
               </div>
-              <div class="urun-alt">${[u.marka,u.model,u.tip,u.seri_no,u.renk].filter(Boolean).join(' · ')}</div>
+              <div class="urun-alt"><table>${[
+                ['Marka', u.marka], ['Model', u.model], ['Tip', u.tip],
+                ['Seri No', u.seri_no], ['Renk', u.renk]
+              ].filter(([,v]) => v).map(([k,v]) =>
+                `<tr><td>${k}</td><td>${v}</td></tr>`
+              ).join('')}</table></div>
               ${sktChip(u.skt)}
               ${gecmisSatirlar}
             </div>
