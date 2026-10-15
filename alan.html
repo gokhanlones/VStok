@@ -246,20 +246,33 @@
 
       const kartlar = await Promise.all(urunler.map(async u => {
         const gecmis = await miktarlariGetir(u.id);
-        const gecmisSatirlar = gecmis.length
-          ? `<div class="miktar-gecmis">${gecmis.map(m =>
-              `<div class="urun-miktar-log">
-                <span>${m.miktar} ${u.birim}</span>
-                <span>${tarihFormat(m.tarih)}</span>
-              </div>`).join('')}
-            </div>`
+
+        // İlk girişin tarihi mavi miktarın altına
+        const ilkTarih = gecmis.length
+          ? `<div class="urun-ilk-tarih">${tarihFormat(gecmis[0].tarih)}</div>`
           : '';
+
+        // İlk kayıt hariç, girilen değerler
+        const dususler = gecmis.slice(1).map(m =>
+          `<div class="urun-miktar-log">
+            <span>${m.miktar} ${u.birim}</span>
+            <span>${tarihFormat(m.tarih)}</span>
+          </div>`
+        ).join('');
+
+        const gecmisSatirlar = dususler
+          ? `<div class="miktar-gecmis">${dususler}</div>`
+          : '';
+
         return `
           <div class="urun-kart" data-id="${u.id}">
             <div class="urun-icerik">
               <div class="urun-kart-ust">
                 <div class="urun-ad">${u.ad}</div>
-                <div class="urun-miktar">${u.miktar} ${u.birim}</div>
+                <div class="urun-miktar-col">
+                  <div class="urun-miktar">${u.miktar} ${u.birim}</div>
+                  ${ilkTarih}
+                </div>
               </div>
               <div class="urun-alt">${[u.marka,u.model,u.tip,u.seri_no,u.renk].filter(Boolean).join(' · ')}</div>
               ${sktChip(u.skt)}
@@ -370,8 +383,10 @@
       const urunler = await urunleriGetir(alanId);
       const u = urunler.find(x => x.id === id);
       if (!u) return;
+      const gecmis = await miktarlariGetir(id);
+      const sonMiktar = gecmis.length ? gecmis[gecmis.length - 1].miktar : u.miktar;
       document.getElementById('sil-urun-ad').textContent = u.ad;
-      document.getElementById('miktar-guncelle-val').value = u.miktar;
+      document.getElementById('miktar-guncelle-val').value = sonMiktar;
       silOverlay.classList.add('open');
     }
 
