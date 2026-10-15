@@ -9,7 +9,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     html, body {
       height: 100%;
       background: #F5F7FA;
@@ -17,7 +16,7 @@
       overflow-x: hidden;
     }
 
-    /* ── Banner ── */
+    /* Banner */
     .banner {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -31,171 +30,150 @@
       z-index: 100;
     }
     .btn-hamburger {
-      background: none;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      padding: 4px;
+      background: none; border: none; cursor: pointer;
+      display: flex; flex-direction: column; gap: 5px; padding: 4px;
     }
     .btn-hamburger span {
-      display: block;
-      width: 22px;
-      height: 2px;
-      background: #D8E6F0;
-      border-radius: 2px;
+      display: block; width: 22px; height: 2px;
+      background: #D8E6F0; border-radius: 2px;
     }
     .banner-title {
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      color: #D8E6F0;
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
+      font-size: 20px; font-weight: 700;
+      letter-spacing: -0.5px; color: #D8E6F0;
+      position: absolute; left: 50%; transform: translateX(-50%);
     }
     .banner-title span { color: #3D9BE9; }
     .avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      object-fit: cover;
-      background: #1E3A5F;
+      width: 32px; height: 32px; border-radius: 50%;
+      object-fit: cover; background: #1E3A5F;
       border: 1.5px solid #3D9BE9;
     }
 
-    /* ── Sidebar ── */
+    /* Sidebar */
     .overlay {
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background: rgba(0,0,0,0.4);
-      z-index: 200;
-      opacity: 0;
-      pointer-events: none;
+      z-index: 200; opacity: 0; pointer-events: none;
       transition: opacity 0.3s;
     }
     .overlay.open { opacity: 1; pointer-events: all; }
     .sidebar {
-      position: fixed;
-      top: 0; left: 0;
-      width: 75vw;
-      max-width: 300px;
-      height: 100%;
-      background: #fff;
-      z-index: 300;
+      position: fixed; top: 0; left: 0;
+      width: 75vw; max-width: 300px; height: 100%;
+      background: #fff; z-index: 300;
       transform: translateX(-100%);
       transition: transform 0.3s ease;
     }
     .sidebar.open { transform: translateX(0); }
 
-    /* ── İçerik ── */
+    /* İçerik */
     .content {
       margin-top: 56px;
-      height: calc(100% - 56px);
+      padding: 20px 16px;
+      padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
     }
 
-    /* ── FAB ── */
-    .fab {
-      position: fixed;
-      bottom: calc(24px + env(safe-area-inset-bottom, 0px));
-      right: 24px;
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: #3D9BE9;
-      color: #fff;
-      font-size: 28px;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 16px rgba(61,155,233,0.4);
-      z-index: 100;
-    }
+    /* Depo kartları */
+    .depo-liste { display: flex; flex-direction: column; gap: 12px; }
 
-    /* ── Modal ── */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      z-index: 400;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s;
-    }
-    .modal-overlay.open { opacity: 1; pointer-events: all; }
-
-    .modal-card {
+    .depo-kart {
       background: #fff;
-      border-radius: 16px;
-      padding: 28px 24px;
-      width: calc(100% - 48px);
-      max-width: 360px;
+      border-radius: 12px;
+      padding: 18px 16px;
       display: flex;
-      flex-direction: column;
-      gap: 20px;
-      transform: translateY(16px);
-      transition: transform 0.2s;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      cursor: pointer;
+      border: 1.5px solid transparent;
+      transition: border-color 0.2s;
     }
-    .modal-overlay.open .modal-card { transform: translateY(0); }
+    .depo-kart:active { border-color: #3D9BE9; }
 
-    .modal-title {
-      font-size: 18px;
+    .depo-kart-ad {
+      font-size: 16px;
       font-weight: 700;
       color: #0A1520;
       letter-spacing: -0.3px;
     }
-
-    .modal-input {
-      width: 100%;
-      padding: 12px 14px;
-      border: 1.5px solid #D0DCE8;
-      border-radius: 8px;
-      font-family: 'Barlow', system-ui, sans-serif;
-      font-size: 15px;
+    .depo-kart-ok {
+      color: #3D9BE9;
+      font-size: 20px;
       font-weight: 300;
-      color: #0A1520;
-      outline: none;
-      transition: border-color 0.2s;
+    }
+
+    /* Boş durum */
+    .bos-durum {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      height: calc(100vh - 120px);
+      color: #4A6780;
+    }
+    .bos-durum-ikon { font-size: 48px; opacity: 0.3; }
+    .bos-durum-yazi { font-size: 14px; font-weight: 300; }
+
+    /* FAB */
+    .fab {
+      position: fixed;
+      bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+      right: 24px;
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: #3D9BE9;
+      color: #fff; font-size: 28px;
+      border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px rgba(61,155,233,0.4);
+      z-index: 100;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 400;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal-card {
+      background: #fff; border-radius: 16px;
+      padding: 28px 24px;
+      width: calc(100% - 48px); max-width: 360px;
+      display: flex; flex-direction: column; gap: 20px;
+      transform: translateY(16px); transition: transform 0.2s;
+    }
+    .modal-overlay.open .modal-card { transform: translateY(0); }
+    .modal-title { font-size: 18px; font-weight: 700; color: #0A1520; letter-spacing: -0.3px; }
+    .modal-input {
+      width: 100%; padding: 12px 14px;
+      border: 1.5px solid #D0DCE8; border-radius: 8px;
+      font-family: 'Barlow', system-ui, sans-serif;
+      font-size: 15px; font-weight: 300; color: #0A1520;
+      outline: none; transition: border-color 0.2s;
     }
     .modal-input:focus { border-color: #3D9BE9; }
-
-    .modal-actions {
-      display: flex;
-      gap: 12px;
-      justify-content: flex-end;
-    }
+    .modal-actions { display: flex; gap: 12px; justify-content: flex-end; }
     .btn-cancel {
-      padding: 10px 20px;
-      border: none;
-      background: none;
-      color: #4A6780;
-      font-family: 'Barlow', system-ui, sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
+      padding: 10px 20px; border: none; background: none;
+      color: #4A6780; font-family: 'Barlow', system-ui, sans-serif;
+      font-size: 14px; font-weight: 700; cursor: pointer;
     }
     .btn-save {
-      padding: 10px 24px;
-      border: none;
-      background: #0A1520;
-      color: #fff;
+      padding: 10px 24px; border: none;
+      background: #0A1520; color: #fff;
       font-family: 'Barlow', system-ui, sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      border-radius: 8px;
-      cursor: pointer;
+      font-size: 14px; font-weight: 700;
+      border-radius: 8px; cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-  <!-- Banner -->
   <header class="banner">
     <button class="btn-hamburger" id="btn-menu">
       <span></span><span></span><span></span>
@@ -204,17 +182,15 @@
     <img class="avatar" id="avatar" src="" alt="">
   </header>
 
-  <!-- Sidebar -->
   <div class="overlay" id="overlay"></div>
   <aside class="sidebar" id="sidebar"></aside>
 
-  <!-- İçerik -->
-  <main class="content"></main>
+  <main class="content">
+    <div class="depo-liste" id="depo-liste"></div>
+  </main>
 
-  <!-- FAB -->
   <button class="fab" id="fab">+</button>
 
-  <!-- Modal -->
   <div class="modal-overlay" id="modal-overlay">
     <div class="modal-card">
       <div class="modal-title">Yeni Depo</div>
@@ -228,9 +204,9 @@
 
   <script type="module">
     import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { depoEkle } from './db.js';
     import { getAuth, onAuthStateChanged }
       from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { depoEkle, depolariGetir } from './db.js';
 
     const app  = initializeApp({
       apiKey:            "AIzaSyDhf0oH-g4c-gPRNGAnuET6kT8T3eeYFKg",
@@ -242,10 +218,35 @@
     });
 
     const auth = getAuth(app);
-    onAuthStateChanged(auth, user => {
+    let currentUid = null;
+
+    // Depo listesini çiz
+    async function listeGuncelle() {
+      const liste  = document.getElementById('depo-liste');
+      const depolar = await depolariGetir(currentUid);
+      
+      if (depolar.length === 0) {
+        liste.innerHTML = `
+          <div class="bos-durum">
+            <div class="bos-durum-ikon">📦</div>
+            <div class="bos-durum-yazi">Henüz depo yok. + ile ekle.</div>
+          </div>`;
+        return;
+      }
+
+      liste.innerHTML = depolar.map(d => `
+        <div class="depo-kart" onclick="location.href='depo.html?id=${d.id}'">
+          <div class="depo-kart-ad">${d.ad}</div>
+          <div class="depo-kart-ok">›</div>
+        </div>`).join('');
+    }
+
+    onAuthStateChanged(auth, async user => {
       if (!user) { location.href = 'auth.html'; return; }
       const av = document.getElementById('avatar');
       if (user.photoURL) av.src = user.photoURL;
+      currentUid = user.uid;
+      await listeGuncelle();
     });
 
     // Sidebar
@@ -259,9 +260,8 @@
     // Modal
     const modalOverlay = document.getElementById('modal-overlay');
     const depoAdi      = document.getElementById('depo-adi');
-
-    const openModal  = () => { modalOverlay.classList.add('open'); depoAdi.focus(); };
-    const closeModal = () => { modalOverlay.classList.remove('open'); depoAdi.value = ''; };
+    const openModal    = () => { modalOverlay.classList.add('open'); depoAdi.focus(); };
+    const closeModal   = () => { modalOverlay.classList.remove('open'); depoAdi.value = ''; };
 
     document.getElementById('fab').addEventListener('click', openModal);
     document.getElementById('btn-cancel').addEventListener('click', closeModal);
@@ -270,8 +270,9 @@
     document.getElementById('btn-save').addEventListener('click', async () => {
       const ad = depoAdi.value.trim();
       if (!ad) return;
-      await depoEkle(auth.currentUser.uid, ad);
+      await depoEkle(currentUid, ad);
       closeModal();
+      await listeGuncelle();
     });
   </script>
 </body>
