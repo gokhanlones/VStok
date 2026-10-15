@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>VStok</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      background: #0A1520;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .brand {
+      font-family: 'Barlow', system-ui, sans-serif;
+      font-size: clamp(64px, 20vw, 96px);
+      font-weight: 700;
+      letter-spacing: -2px;
+      color: #D8E6F0;
+      opacity: 0;
+      animation: emerge 0.6s ease forwards;
+    }
+    .brand span { color: #3D9BE9; }
+    @keyframes emerge {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="brand">V<span>S</span>tok</div>
+
+  <script type="module">
+    import { initializeApp }     from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged }
+      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    // Dil ve bağlantı
+    const lang = (navigator.language || 'tr').split('-')[0];
+    localStorage.setItem('vstok_lang', lang);
+    localStorage.setItem('vstok_online', navigator.onLine);
+    window.addEventListener('online',  () => localStorage.setItem('vstok_online', true));
+    window.addEventListener('offline', () => localStorage.setItem('vstok_online', false));
+
+    // Firebase
+    const app  = initializeApp({
+      apiKey:            "AIzaSyDhf0oH-g4c-gPRNGAnuET6kT8T3eeYFKg",
+      authDomain:        "vstok-4541b.firebaseapp.com",
+      projectId:         "vstok-4541b",
+      storageBucket:     "vstok-4541b.firebasestorage.app",
+      messagingSenderId: "987977489899",
+      appId:             "1:987977489899:web:ea79e1e82e23c935e2cdae"
+    });
+
+    const auth = getAuth(app);
+
+    onAuthStateChanged(auth, user => {
+      location.href = user ? 'app.html' : 'auth.html';
+    });
+  </script>
+</body>
+</html>
