@@ -1,5 +1,5 @@
 const DB_NAME    = 'vstok_db';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 function openDB() {
   return new Promise((resolve, reject) => {
@@ -17,6 +17,10 @@ function openDB() {
       if (!db.objectStoreNames.contains('urunler')) {
         const s = db.createObjectStore('urunler', { keyPath: 'id', autoIncrement: true });
         s.createIndex('alan_id', 'alan_id', { unique: false });
+      }
+      if (!db.objectStoreNames.contains('miktarlar')) {
+        const s = db.createObjectStore('miktarlar', { keyPath: 'id', autoIncrement: true });
+        s.createIndex('urun_id', 'urun_id', { unique: false });
       }
     };
     req.onsuccess = e => resolve(e.target.result);
@@ -142,5 +146,36 @@ export async function urunSil(id) {
     const req = tx.objectStore('urunler').delete(id);
     req.onsuccess = () => res();
     req.onerror   = e => rej(e.target.error);
+  });
+}
+
+// ── Miktarlar ─────────────────────────────────────────────────────
+
+export async function miktarEkle(urun_id, miktar) {
+  const db = await openDB();
+  const tx = db.transaction('miktarlar', 'readwrite');
+  return new Promise((res, rej) => {
+    const req = tx.objectStore('miktarlar').add({
+      urun_id,
+      miktar,
+      tarih: Date.now()
+    });
+    req.onsuccess = e => res(e.target.result);
+    req.onerror   = e => rej(e.target.error);
+  });
+}
+
+export async function sonMiktariGetir(urun_id) {
+  const db = await openDB();
+  const tx = db.transaction('miktarlar', 'readonly');
+  return new Promise((res, rej) => {
+    const req = tx.objectStore('miktarlar').index('urun_id').getAll(urun_id);
+    req.onsuccess = e => {
+      const kayitlar = e.target.result;
+      if (!kayitlar.length) { res(null); return; }
+      kayitlar.sort((a, b) => b.tarih - a.tarih);
+      res(kayitlar[0]);
+    };
+    req.onerror = e => rej(e.target.error);
   });
 }
