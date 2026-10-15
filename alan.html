@@ -128,10 +128,7 @@
     </div>
     <div class="form-group">
       <div class="form-label">Renk</div>
-      <div class="renk-row">
-        <input class="renk-input" id="f-renk" type="color" value="#ffffff">
-        <span class="renk-label-text">Renk seç</span>
-      </div>
+      <input class="form-input" id="f-renk" type="text" placeholder="Kırmızı, Mavi, RAL 3000…">
     </div>
     <div class="form-group">
       <div class="form-label">Marka</div>
@@ -225,13 +222,12 @@
 
       liste.innerHTML = urunler.map(u => `
         <div class="urun-kart" data-id="${u.id}">
-          <div class="urun-renk-bar" style="background:${u.renk || '#3D9BE9'}"></div>
           <div class="urun-icerik">
             <div class="urun-kart-ust">
               <div class="urun-ad">${u.ad}</div>
               <div class="urun-miktar">${u.miktar} ${u.birim}</div>
             </div>
-            <div class="urun-alt">${[u.marka,u.model,u.tip,u.seri_no].filter(Boolean).join(' · ')}</div>
+            <div class="urun-alt">${[u.marka,u.model,u.tip,u.seri_no,u.renk].filter(Boolean).join(' · ')}</div>
             ${sktChip(u.skt)}
           </div>
         </div>`).join('');
@@ -263,7 +259,7 @@
 
     function formuTemizle() {
       ['f-ad','f-miktar','f-marka','f-model','f-tip','f-seri','f-skt','f-not'].forEach(id => document.getElementById(id).value = '');
-      document.getElementById('f-renk').value = '#ffffff';
+      document.getElementById('f-renk').value = '';
       birimIndex = 0;
       document.getElementById('birim-label').textContent = 'Adet';
     }
@@ -290,7 +286,7 @@
       document.getElementById('f-seri').value   = u.seri_no || '';
       document.getElementById('f-skt').value    = u.skt   || '';
       document.getElementById('f-not').value    = u.notlar || '';
-      document.getElementById('f-renk').value   = u.renk  || '#ffffff';
+      document.getElementById('f-renk').value   = u.renk  || '';
       birimIndex = birimler.indexOf(u.birim);
       if (birimIndex < 0) birimIndex = 0;
       document.getElementById('birim-label').textContent = birimler[birimIndex];
