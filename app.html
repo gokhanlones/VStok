@@ -26,10 +26,10 @@
     .content { margin-top: 56px; padding: 20px 16px; padding-bottom: calc(88px + env(safe-area-inset-bottom,0px)); }
 
     .depo-liste { display: flex; flex-direction: column; gap: 12px; }
-    .depo-kart { background: #fff; border-radius: 12px; padding: 18px 16px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 4px rgba(0,0,0,0.07); cursor: pointer; border: 1.5px solid transparent; transition: border-color 0.2s; user-select: none; }
-    .depo-kart:active { border-color: #3D9BE9; }
+    .depo-kart { background: #fff; padding: 18px 48px 18px 16px; display: flex; align-items: center; box-shadow: 2px 2px 6px rgba(0,0,0,0.1); cursor: pointer; user-select: none; clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 50%, calc(100% - 24px) 100%, 0 100%); border-radius: 4px 0 0 4px; transition: opacity 0.15s; }
+    .depo-kart:active { opacity: 0.7; }
     .depo-kart-ad { font-size: 16px; font-weight: 700; color: #0A1520; letter-spacing: -0.3px; }
-    .depo-kart-ok { color: #3D9BE9; font-size: 20px; font-weight: 300; }
+    .depo-kart-ok { display: none; }
 
     .bos-durum { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; height: calc(100vh - 120px); color: #4A6780; }
     .bos-durum-ikon { font-size: 48px; opacity: 0.3; }
