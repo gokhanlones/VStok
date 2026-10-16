@@ -74,17 +74,10 @@
 
     /* Alan kartları */
     .alan-liste { display: flex; flex-direction: column; gap: 12px; }
-    .alan-kart {
-      background: #fff; border-radius: 12px;
-      padding: 18px 16px;
-      display: flex; align-items: center; justify-content: space-between;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-      cursor: pointer; border: 1.5px solid transparent;
-      transition: border-color 0.2s;
-    }
-    .alan-kart:active { border-color: #3D9BE9; }
+    .alan-kart { background: #fff; padding: 18px 48px 18px 16px; display: flex; align-items: center; box-shadow: 2px 2px 6px rgba(0,0,0,0.1); cursor: pointer; user-select: none; clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 50%, calc(100% - 24px) 100%, 0 100%); border-radius: 4px 0 0 4px; transition: opacity 0.15s; }
+    .alan-kart:active { opacity: 0.7; }
     .alan-kart-ad { font-size: 16px; font-weight: 700; color: #0A1520; }
-    .alan-kart-ok { color: #3D9BE9; font-size: 20px; font-weight: 300; }
+    .alan-kart-ok { display: none; }
 
     /* Boş durum */
     .bos-durum {
