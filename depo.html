@@ -176,10 +176,34 @@
     </div>
   </div>
 
+  <!-- Uzun basma seçenekleri -->
+  <div class="modal-overlay" id="secim-overlay">
+    <div class="modal-card">
+      <div class="modal-title" id="secim-baslik"></div>
+      <div class="modal-actions" style="flex-direction:column; gap:8px;">
+        <button class="btn-save" id="btn-yeniden-adlandir" style="width:100%; text-align:center;">Yeniden Adlandır</button>
+        <button class="btn-save" id="btn-alan-sil" style="width:100%; text-align:center; background:#E74C3C;">Sil</button>
+        <button class="btn-cancel" id="btn-secim-vazgec" style="width:100%; text-align:center;">Vazgeç</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rename modalı -->
+  <div class="modal-overlay" id="rename-overlay">
+    <div class="modal-card">
+      <div class="modal-title">Yeniden Adlandır</div>
+      <input class="modal-input" id="rename-input" type="text" placeholder="Yeni ad">
+      <div class="modal-actions">
+        <button class="btn-cancel" id="rename-vazgec">İptal</button>
+        <button class="btn-save" id="rename-kaydet">Kaydet</button>
+      </div>
+    </div>
+  </div>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { alanEkle, alanlariGetir } from './db.js';
+    import { alanEkle, alanlariGetir, alanGuncelle, alanSil } from './db.js';
 
     initializeApp({
       apiKey:            "AIzaSyDhf0oH-g4c-gPRNGAnuET6kT8T3eeYFKg",
@@ -213,10 +237,23 @@
       }
 
       liste.innerHTML = alanlar.map(a => `
-        <div class="alan-kart" onclick="location.href='alan.html?id=${a.id}&ad=${encodeURIComponent(a.ad)}'">
+        <div class="alan-kart" data-id="${a.id}" data-ad="${a.ad.replace(/"/g,'&quot;')}">
           <div class="alan-kart-ad">${a.ad}</div>
           <div class="alan-kart-ok">›</div>
         </div>`).join('');
+
+      liste.querySelectorAll('.alan-kart').forEach(kart => {
+        let timer = null;
+        kart.addEventListener('touchstart', () => {
+          timer = setTimeout(() => { timer = null; secimAc(parseInt(kart.dataset.id), kart.dataset.ad); }, 600);
+        });
+        kart.addEventListener('touchend', () => {
+          if (timer) { clearTimeout(timer); location.href = `alan.html?id=${kart.dataset.id}&ad=${encodeURIComponent(kart.dataset.ad)}`; }
+        });
+        kart.addEventListener('touchmove', () => { if (timer) clearTimeout(timer); timer = null; });
+        kart.addEventListener('contextmenu', e => { e.preventDefault(); secimAc(parseInt(kart.dataset.id), kart.dataset.ad); });
+        kart.addEventListener('click', () => location.href = `alan.html?id=${kart.dataset.id}&ad=${encodeURIComponent(kart.dataset.ad)}`);
+      });
     }
 
     listeGuncelle();
@@ -238,6 +275,56 @@
     document.getElementById('fab').addEventListener('click', openModal);
     document.getElementById('btn-cancel').addEventListener('click', closeModal);
     modalOverlay.addEventListener('click', e => { if (e.target === modalOverlay) closeModal(); });
+
+    // Seçim modalı
+    const secimOverlay = document.getElementById('secim-overlay');
+    let secimId = null; let secimAd = null;
+
+    function secimAc(id, ad) {
+      secimId = id; secimAd = ad;
+      document.getElementById('secim-baslik').textContent = ad;
+      secimOverlay.classList.add('open');
+    }
+    function secimKapat() { secimOverlay.classList.remove('open'); secimId = null; secimAd = null; }
+
+    document.getElementById('btn-secim-vazgec').addEventListener('click', secimKapat);
+    secimOverlay.addEventListener('click', e => { if (e.target === secimOverlay) secimKapat(); });
+
+    document.getElementById('btn-yeniden-adlandir').addEventListener('click', () => {
+      const id = secimId; const ad = secimAd;
+      secimKapat();
+      renameAc(id, ad);
+    });
+
+    document.getElementById('btn-alan-sil').addEventListener('click', async () => {
+      if (secimId) await alanSil(secimId);
+      secimKapat();
+      await listeGuncelle();
+    });
+
+    // Rename
+    const renameOverlay = document.getElementById('rename-overlay');
+    const renameInput   = document.getElementById('rename-input');
+    let renameId = null;
+
+    function renameAc(id, mevcutAd) {
+      renameId = id;
+      renameInput.value = mevcutAd;
+      renameOverlay.classList.add('open');
+      setTimeout(() => renameInput.focus(), 200);
+    }
+    function renameKapat() { renameOverlay.classList.remove('open'); renameId = null; }
+
+    document.getElementById('rename-vazgec').addEventListener('click', renameKapat);
+    renameOverlay.addEventListener('click', e => { if (e.target === renameOverlay) renameKapat(); });
+
+    document.getElementById('rename-kaydet').addEventListener('click', async () => {
+      const yeniAd = renameInput.value.trim();
+      if (!yeniAd || !renameId) return;
+      await alanGuncelle(renameId, yeniAd);
+      renameKapat();
+      await listeGuncelle();
+    });
 
     document.getElementById('btn-save').addEventListener('click', async () => {
       const ad = alanAdi.value.trim();
