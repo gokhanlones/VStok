@@ -82,6 +82,22 @@ export async function alanlariGetir(depo_id) {
   });
 }
 
+export async function alanGuncelle(id, yeniAd) {
+  const db    = await openDB();
+  const tx    = db.transaction('alanlar', 'readwrite');
+  const store = tx.objectStore('alanlar');
+  return new Promise((res, rej) => {
+    const getReq = store.get(id);
+    getReq.onsuccess = e => {
+      const alan = { ...e.target.result, ad: yeniAd };
+      const putReq = store.put(alan);
+      putReq.onsuccess = () => res();
+      putReq.onerror   = e => rej(e.target.error);
+    };
+    getReq.onerror = e => rej(e.target.error);
+  });
+}
+
 export async function alanSil(id) {
   const db = await openDB();
   const tx = db.transaction('alanlar', 'readwrite');
