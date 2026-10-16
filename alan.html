@@ -71,7 +71,7 @@
     .form-label { font-size: 12px; font-weight: 700; color: #4A6780; letter-spacing: 0.5px; }
     .form-input { padding: 12px 14px; border: 1.5px solid #D0DCE8; border-radius: 8px; font-family: 'Barlow', system-ui, sans-serif; font-size: 15px; font-weight: 300; color: #0A1520; outline: none; width: 100%; transition: border-color 0.2s; }
     .form-input:focus { border-color: #3D9BE9; }
-    .miktar-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
     .birim-btn { padding: 12px 14px; border: 1.5px solid #3D9BE9; border-radius: 8px; background: #EBF5FD; color: #3D9BE9; font-family: 'Barlow', system-ui, sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; text-align: left; display: flex; align-items: center; justify-content: space-between; }
 
     /* Renk satırı */
@@ -125,15 +125,13 @@
       <div class="form-label">Ürün Adı *</div>
       <input class="form-input" id="f-ad" type="text" placeholder="Ürün adı">
     </div>
-    <div class="miktar-row">
-      <div class="form-group">
-        <div class="form-label">Miktar *</div>
-        <input class="form-input" id="f-miktar" type="number" min="0" step="any" placeholder="0">
-      </div>
-      <div class="form-group">
-        <div class="form-label">Birim *</div>
-        <button class="birim-btn" id="f-birim"><span id="birim-label">Adet</span><span>⇅</span></button>
-      </div>
+    <div class="form-group">
+      <div class="form-label">Miktar *</div>
+      <input class="form-input" id="f-miktar" type="number" min="0" step="any" placeholder="0">
+    </div>
+    <div class="form-group">
+      <div class="form-label">Birim *</div>
+      <button class="birim-btn" id="f-birim"><span id="birim-label">Adet</span><span>⇅</span></button>
     </div>
     <div class="form-group">
       <div class="form-label">Renk</div>
