@@ -30,13 +30,9 @@
 
     /* Ürün kartları */
     .urun-liste { display: flex; flex-direction: column; gap: 12px; }
-    .urun-kart {
-      background: #fff; border-radius: 12px; padding: 16px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-      display: flex; gap: 12px; align-items: stretch;
-      cursor: pointer; user-select: none;
-    }
-    .urun-renk-bar { width: 4px; border-radius: 4px; flex-shrink: 0; }
+    .urun-kart { background: #fff; border-radius: 8px; padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); cursor: pointer; user-select: none; border-left: 6px solid #3D9BE9; transition: opacity 0.15s; }
+    .urun-kart:active { opacity: 0.7; }
+    .urun-renk-bar { display: none; }
     .urun-icerik { flex: 1; }
     .urun-kart-ust { display: flex; justify-content: space-between; align-items: flex-start; }
     .urun-ad { font-size: 16px; font-weight: 700; color: #0A1520; }
