@@ -50,6 +50,22 @@ export async function depolariGetir(uid) {
   });
 }
 
+export async function depoGuncelle(id, yeniAd) {
+  const db    = await openDB();
+  const tx    = db.transaction('depolar', 'readwrite');
+  const store = tx.objectStore('depolar');
+  return new Promise((res, rej) => {
+    const getReq = store.get(id);
+    getReq.onsuccess = e => {
+      const depo   = { ...e.target.result, ad: yeniAd };
+      const putReq = store.put(depo);
+      putReq.onsuccess = () => res();
+      putReq.onerror   = e => rej(e.target.error);
+    };
+    getReq.onerror = e => rej(e.target.error);
+  });
+}
+
 export async function depoSil(id) {
   const db = await openDB();
   const tx = db.transaction('depolar', 'readwrite');
